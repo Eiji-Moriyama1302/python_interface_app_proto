@@ -1,0 +1,21 @@
+{
+    "card_directory": "/tmp/mlb",
+    "devices": {
+        "fpga": [
+            {"type": "hex16", "file": "fpgaver", "val": "----", "in": "fpgaver_handler"},
+            {"type": "out",   "file": "display_mode", "val": "1", "v": "choice_12", "out": "displaymode_handler"},
+            {"type": "in",    "file": "rsw", "val": "------", "v": "validate_hex6", "in": "rsw_handler"}
+        ],
+        "ethport1": [{"type": "in", "file": "linkgood", "val": "-", "v": "choice_bool", "in": "ethport1_linkgood_handler"}],
+        "ethport2": [{"type": "in", "file": "linkgood", "val": "-", "v": "choice_bool", "in": "ethport2_linkgood_handler"}],
+        "ethport3": [{"type": "in", "file": "linkgood", "val": "-", "v": "choice_bool", "in": "ethport3_linkgood_handler"}],
+        "backlight1": [
+            {"type": "in", "file": "error", "val": "-", "v": "choice_bool", "in": "backlight1_error_handler"},
+            {"type": "in", "file": "duty",  "val": "-", "v": "validate_percent", "in": "backlight1_duty_handler"}
+        ],
+        "backlight2": [
+            {"type": "in", "file": "error", "val": "-", "v": "choice_bool", "in": "backlight2_error_handler"},
+            {"type": "in", "file": "duty",  "val": "-", "v": "validate_percent", "in": "backlight2_duty_handler"}
+        ]
+    }
+}
