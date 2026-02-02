@@ -94,33 +94,6 @@ class OutputParameter(BaseParameter):
         super().__init__(filename, value, validator_func, input_func, output_func)
         
 
-class InputParameter16bit(InputParameter):
-    """
-    16bitの16進数文字列（0x0000～0xFFFF）を専門に扱う入力クラス
-    """
-    def __init__(self, filename, value=None, input_func=None):
-        # 16bit 16進数チェック用関数の定義
-        def is_16bit_hex(val):
-            if val is None:
-                return False
-            # 文字列に変換
-            s_val = str(val).strip()
-            # 0x または 0X 始まりを許容する正規表現
-            # 1. 0xがある場合、その後に1～4桁の16進数文字
-            # 2. 0xがない場合、1～4桁の16進数文字
-            pattern = r'^(0[xX])?[0-9a-fA-F]{1,4}$'
-            
-            if re.match(pattern, s_val):
-                try:
-                    # 数値として0xFFFF以下であることを確認
-                    return int(s_val, 16) <= 0xFFFF
-                except ValueError:
-                    return False
-            return False
-
-        # 親クラスのコンストラクタを呼び、バリデーション関数を固定で登録
-        super().__init__(filename, value=value, validator_func=is_16bit_hex, input_func=input_func)
-
 class Device:
     def __init__(self, directory_name, parameters=None):
         """
