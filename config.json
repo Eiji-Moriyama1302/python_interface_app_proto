@@ -2,7 +2,7 @@
     "card_directory": "/tmp/mlb",
     "devices": {
         "fpga": [
-            {"type": "hex16", "file": "fpgaver", "val": "----", "in": "fpgaver_handler"},
+            {"type": "in", "file": "fpgaver", "val": "----", "in": "fpgaver_handler"},
             {"type": "out",   "file": "display_mode", "val": "1", "v": "choice_12", "out": "displaymode_handler"},
             {"type": "in",    "file": "rsw", "val": "------", "v": "validate_hex6", "in": "rsw_handler"}
         ],
