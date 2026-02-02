@@ -1,5 +1,6 @@
 import json
 import os
+import time
 from mlb_param import InterfaceCard, Device, InputParameter, OutputParameter
 from mlb_func import fpgaver_handler, rsw_handler, displaymode_handler, ethport1_linkgood_handler, ethport2_linkgood_handler, ethport3_linkgood_handler, backlight1_error_handler, backlight2_error_handler, backlight1_duty_handler, backlight2_duty_handler, create_choice_validator, create_choice_validator, validate_16bit_hex_6culum, validate_percent
 
@@ -38,18 +39,32 @@ def main(config_file="config.json"):
             in_func = func_map.get(p.get("in"))
             out_func = func_map.get(p.get("out"))
 
+            param = None
             if p["type"] == "in":
                 param = InputParameter(p["file"], value=p["val"], validator_func=v_func, input_func=in_func)
             elif p["type"] == "out":
                 param = OutputParameter(p["file"], value=p["val"], validator_func=v_func, output_func=out_func)
-            params.append(param)
+            
+            if param:
+                params.append(param)
         
         mlb.add_device(Device(directory_name=dev_name, parameters=params))
 
     # 3. 実行
-    print(f"--- 処理開始 (Config: {config_file}) ---")
-    mlb.update_status()
-    print("--- 処理終了 ---")
+    print(f"--- 監視開始 (1秒周期 / Config: {config_file}) ---")
+    print("終了するには Ctrl+C を押してください")
+    
+    try:
+        while True:
+            # 状態の更新を実行
+            mlb.update_status()
+            
+            # 次の実行まで1秒待機
+            time.sleep(1)
+            
+    except KeyboardInterrupt:
+        # Ctrl+C が押されたときに綺麗に終了する
+        print("\n--- 監視を停止しました ---")
 
 if __name__ == "__main__":
     main()
