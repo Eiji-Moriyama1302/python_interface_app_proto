@@ -1,7 +1,7 @@
 import json
 import os
 import time
-from mlb_param import InterfaceCard, Device, InputParameter, OutputParameter
+from InterfaceParam import InterfaceCard, Device, InputParameter, OutputParameter
 from mlb_func import fpgaver_handler, rsw_handler, displaymode_handler, ethport1_linkgood_handler, ethport2_linkgood_handler, ethport3_linkgood_handler, backlight1_error_handler, backlight2_error_handler, backlight1_duty_handler, backlight2_duty_handler, create_choice_validator, create_choice_validator, validate_16bit_hex_6culum, validate_percent
 
 # --- 関数マッピング ---

@@ -1,6 +1,6 @@
 import time
 import os
-from mlb_param import InterfaceCard, Device, InputParameter, OutputParameter, InputParameter16bit
+from InterfaceParam import InterfaceCard, Device, InputParameter, OutputParameter, InputParameter16bit
 
 # --- バリデータ定義（クロージャで生成） ---
 validate_hex6 = validate_16bit_hex_6culum  # 既存の関数を流用

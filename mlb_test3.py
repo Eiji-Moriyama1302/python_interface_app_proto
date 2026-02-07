@@ -1,6 +1,6 @@
 import json
 import os
-from mlb_param import InterfaceCard, Device, InputParameter, OutputParameter, InputParameter16bit
+from InterfaceParam import InterfaceCard, Device, InputParameter, OutputParameter, InputParameter16bit
 
 # --- 関数マッピング ---
 # JSON内の文字列を実際の関数オブジェクトに変換するための辞書

@@ -2,7 +2,7 @@
 import time
 import os
 
-from mlb_param import InterfaceCard, Device, InputParameter, OutputParameter, InputParameter16bit
+from InterfaceParam import InterfaceCard, Device, InputParameter, OutputParameter, InputParameter16bit
 
 def fpgaver_handler():
     print(f"exec fpgaver_handler.")
