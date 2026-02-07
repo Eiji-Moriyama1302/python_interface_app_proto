@@ -1,13 +1,18 @@
-class InterfaceCtrl:
+from abc import ABC, abstractmethod
+
+class InterfaceCtrl(ABC):
     def __init__(self):
         print("Call InterfaceCtrl::__init__\n")
     
+    @abstractmethod
     def open(self):
-        print("Call InterfaceCtrl::open\n")
+        pass
     
+    @abstractmethod
     def refresh(self):
-        print("Call InterfaceCtrl::refresh\n")
+        pass
 
+    @abstractmethod
     def close(self):
-        print("Call InterfaceCtrl::close\n")
+        pass
     

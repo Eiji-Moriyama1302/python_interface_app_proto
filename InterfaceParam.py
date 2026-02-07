@@ -116,7 +116,7 @@ class InterfaceCard:
     """
     複数のInterfaceを束ねて管理するカードクラス
     """
-    def __init__(self, card_directory, Devices=None):
+    def __init__(self, InterfaceCtrl, card_directory, Devices=None):
         """
         :param card_directory: カードのルートディレクトリ名
         :param devices: device

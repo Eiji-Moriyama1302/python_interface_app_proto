@@ -3,6 +3,7 @@ import os
 import time
 from InterfaceParam import InterfaceCard, Device, InputParameter, OutputParameter
 from mlb_func import fpgaver_handler, rsw_handler, displaymode_handler, ethport1_linkgood_handler, ethport2_linkgood_handler, ethport3_linkgood_handler, backlight1_error_handler, backlight2_error_handler, backlight1_duty_handler, backlight2_duty_handler, create_choice_validator, create_choice_validator, validate_16bit_hex_6culum, validate_percent
+from mlb_ctrl import MlbCtrl
 
 # --- 関数マッピング ---
 # JSON内の文字列を実際の関数オブジェクトに変換するための辞書
@@ -28,7 +29,7 @@ def main(config_file="config.json"):
     with open(config_file, "r", encoding="utf-8") as f:
         config = json.load(f)
 
-    mlb = InterfaceCard(card_directory=config["card_directory"])
+    mlb = InterfaceCard(InterfaceCtrl=MlbCtrl, card_directory=config["card_directory"])
 
     # 2. デバイスの構築
     for dev_name, params_info in config["devices"].items():
