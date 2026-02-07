@@ -1,6 +1,8 @@
 import os
 import re
 
+from InterfaceCtrl import InterfaceCtrl
+
 class BaseParameter:
     """共通のプロパティを持つベースクラス"""
     def __init__(self, filename, value=None, validator_func=None, input_func=None, output_func=None):
@@ -120,6 +122,7 @@ class InterfaceCard:
         :param devices: device
         """
         self.card_directory = card_directory
+        self.ctrl = InterfaceCtrl()
         self.devices = []
         if Devices:
             for device in Devices:
@@ -130,11 +133,17 @@ class InterfaceCard:
         保持している全てのInterfaceのアクセスメソッドを順次実行する
         """
         print(f"--- Card Status update Start: {self.card_directory} ---")
+
+        self.ctrl.open()
+        
+        self.ctrl.refresh()
         
         for device in self.devices:
             # 各deviceのアクセス処理を実行
             device.access()
             
+        self.ctrl.close()
+
         print(f"--- Card status update End ---")
 
     def add_device(self, device):
