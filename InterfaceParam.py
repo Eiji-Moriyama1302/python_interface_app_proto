@@ -20,7 +20,7 @@ class BaseParameter:
             return False
         if self.validator_func:
             if not self.validator_func(value):
-                print(f"エラー: 独自バリデーションに失敗しました ({self.filename})")
+                print(f"エラー: 独自バリデーションに失敗しました ({self.filename}={value})")
                 return False
         return True
 
@@ -43,7 +43,7 @@ class BaseParameter:
         else:
             print(f"already exist path: {self.full_path}")
     
-    def _update_file(self, value):
+    def _update_file(self, controlller, value):
         content = str(value) if value is not None else ""
         with open(self.full_path, 'w', encoding='utf-8') as f:
             f.write(str(content))
@@ -62,7 +62,7 @@ class BaseParameter:
             print(f"ファイル読み込みエラー ({self.full_path}): {e}")
             return None
         
-    def handle_access(self): 
+    def handle_access(self,controlller): 
         """
         1. input_funcで値を取得
         2. バリデーション
@@ -70,15 +70,17 @@ class BaseParameter:
         """
         # input_funcを実行して値を取得
         new_val = self.input_func() if self.input_func else None
+        processed_value = str(new_val).splitlines()[0] if new_val else new_val
         
-        if new_val is None:
+        if processed_value is None:
             return
 
-        if self.validate(new_val) and new_val != self._value:
-            self._value = new_val
+        if self.validate(processed_value) and processed_value != self._value:
+            self._value = processed_value
             # 値が更新された後の通知や後続処理（UI更新など）があればoutput_funcで実行
             if self.output_func:
-                self.output_func(self._value)
+                print(f"[Output] Exec self.output_func: {self._value}")
+                self.output_func(controlller,self._value)
             print(f"[Output] パラメータを更新しました: {self._value}")
         
 
@@ -105,12 +107,12 @@ class Device:
         self.directory_name = directory_name
         self.parameters = parameters if parameters is not None else []
 
-    def access(self):
+    def access(self,controlller):
         """
         全パラメータに対して、仕様に基づいたアクセスメソッドを実行する
         """
         for param in self.parameters:
-            param.handle_access()
+            param.handle_access(controlller)
 
 class InterfaceCard:
     """
@@ -140,7 +142,7 @@ class InterfaceCard:
         
         for device in self.devices:
             # 各deviceのアクセス処理を実行
-            device.access()
+            device.access(self.ctrl)
             
         self.ctrl.close()
 

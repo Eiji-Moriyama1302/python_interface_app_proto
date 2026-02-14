@@ -37,12 +37,12 @@ def backlight2_duty_handler():
     print(f"exec backlight2_duty_handler.")
     return "40"
 
-def backlight_on_handler(self,value):
+def backlight_on_handler(controller,value):
     print(f"exec backlight_on_handler.")
     if value == "1":
-        self.ctrl.backlight_turnon()
+        controller.backlight_turnon()
     if value == "0":
-        self.ctrl.backlight_turnoff()
+        controller.backlight_turnoff()
     return "40"
 
 # より汎用的に作るなら（引数で選択肢を指定できるクロージャ形式）

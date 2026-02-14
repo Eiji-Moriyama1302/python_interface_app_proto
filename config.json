@@ -12,7 +12,7 @@
         "backlight1": [
             {"type": "in", "file": "error", "val": "-", "v": "choice_bool", "in": "backlight1_error_handler"},
             {"type": "in", "file": "duty",  "val": "-", "v": "validate_percent", "in": "backlight1_duty_handler"},
-            {"type": "out","file": "on",    "val": "-", "v": "choice_bool", "in": "backlight_on_handler"}
+            {"type": "out","file": "on",    "val": "-", "v": "choice_bool", "out": "backlight_on_handler"}
         ],
         "backlight2": [
             {"type": "in", "file": "error", "val": "-", "v": "choice_bool", "in": "backlight2_error_handler"},
