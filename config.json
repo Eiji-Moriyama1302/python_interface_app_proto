@@ -11,7 +11,7 @@
         "ethport3": [{"type": "in", "file": "linkgood", "val": "-", "v": "choice_bool", "in": "ethport3_linkgood_handler"}],
         "backlight1": [
             {"type": "in", "file": "error", "val": "-", "v": "choice_bool", "in": "backlight1_error_handler"},
-            {"type": "in", "file": "duty",  "val": "-", "v": "validate_percent", "in": "backlight1_duty_handler"}
+            {"type": "in", "file": "duty",  "val": "-", "v": "validate_percent", "in": "backlight1_duty_handler"},
             {"type": "out","file": "on",    "val": "-", "v": "choice_bool", "in": "backlight_on_handler"}
         ],
         "backlight2": [
