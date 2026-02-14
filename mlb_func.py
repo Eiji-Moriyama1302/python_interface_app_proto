@@ -37,6 +37,14 @@ def backlight2_duty_handler():
     print(f"exec backlight2_duty_handler.")
     return "40"
 
+def backlight_on_handler(self,value):
+    print(f"exec backlight_on_handler.")
+    if value == "1":
+        self.ctrl.backlight_turnon()
+    if value == "0":
+        self.ctrl.backlight_turnoff()
+    return "40"
+
 # より汎用的に作るなら（引数で選択肢を指定できるクロージャ形式）
 def create_choice_validator(choices):
     """指定されたリストのいずれかに含まれるかチェックする関数を返す"""

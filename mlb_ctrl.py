@@ -13,3 +13,9 @@ class MlbCtrl(InterfaceCtrl):
 
     def close(self):
         print("MlbCtrl: セッションを正常に終了しました。")
+
+    def backlight_turnon(self):
+        print("MlbCtrl: backlight_turnon")
+
+    def backlight_turnoff(self):
+        print("MlbCtrl: backlight_turnoff")
