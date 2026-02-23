@@ -48,7 +48,7 @@ class BaseParameter:
         with open(self.full_path, 'w', encoding='utf-8') as f:
             f.write(str(content))
 
-    def _read_file_content(self):
+    def _read_file_content(self, Contoller):
         """
         共通メソッド: ファイルの存在を確認し、内容を読み出す
         ファイルが存在しない場合は None を返す
@@ -69,7 +69,7 @@ class BaseParameter:
         3. 変化があれば内部状態を更新し、通知（output_func）を実行
         """
         # input_funcを実行して値を取得
-        new_val = self.input_func() if self.input_func else None
+        new_val = self.input_func(controlller) if self.input_func else None
         processed_value = str(new_val).splitlines()[0] if new_val else new_val
         
         if processed_value is None:
