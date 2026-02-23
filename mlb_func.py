@@ -1,30 +1,24 @@
 from mlb_ctrl import MlbCtrl
 
 def fpgaver_handler(controller:MlbCtrl):
-    print(f"exec fpgaver_handler.")
     return controller.get_fpgaver()
 
 def rsw_handler(controller:MlbCtrl):
-    print(f"exec rsw_handler.")
-    return controller.get_rsw
+    return controller.get_rsw()
 
 def displaymode_handler(controller:MlbCtrl,value:str):
-    print(f"exec displaymode_handler. {value}")
     if value == "1":
-        controller.display_mode_single
+        controller.display_mode_single()
     if value == "2":
-        controller.display_mode_double
+        controller.display_mode_double()
 
 def ethport1_linkgood_handler(controller:MlbCtrl):
-    print(f"exec ethport1_linkgood_handler.")
     return controller.get_ether_statuses(1)
 
 def ethport2_linkgood_handler(controller:MlbCtrl):
-    print(f"exec ethport2_linkgood_handler.")
     return controller.get_ether_statuses(2)
 
 def ethport3_linkgood_handler(controller:MlbCtrl):
-    print(f"exec ethport3_linkgood_handler.")
     return controller.get_ether_statuses(3)
 
 def backlight1_error_handler(controller:MlbCtrl):
@@ -36,15 +30,12 @@ def backlight2_error_handler(controller:MlbCtrl):
     return "1"
 
 def backlight1_duty_handler(controller:MlbCtrl):
-    print(f"exec backlight1_duty_handler.")
     return controller.get_backlight_pwm_duty(1)
 
 def backlight2_duty_handler(controller:MlbCtrl):
-    print(f"exec backlight2_duty_handler.")
     return controller.get_backlight_pwm_duty(2)
 
 def backlight_on_handler(controller:MlbCtrl,value: str):
-    print(f"exec backlight_on_handler.")
     if value == "1":
         controller.backlight_turnon()
     if value == "0":

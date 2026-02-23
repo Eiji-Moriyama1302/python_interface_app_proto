@@ -5,7 +5,7 @@ from InterfaceParam import InterfaceCard, Device, InputParameter, OutputParamete
 from mlb_func import func_map
 from mlb_ctrl import MlbCtrl
 
-def main(config_file="config.json"):
+def main(config_file:str="config.json"):
     # 1. JSON読み込み
     with open(config_file, "r", encoding="utf-8") as f:
         config = json.load(f)

@@ -23,15 +23,18 @@ class MlbCtrl(InterfaceCtrl):
         return "17"
 
     def get_rsw(self) -> Optional[str]:
+        print(f"exec get_rsw.")
         return "543211"
 
     def get_ether_statuses(self, port_num: int) -> Optional[Tuple[str, str]]:
-        return f"{port_num:04X}"
+        print(f"exec get_ether_statuses.{port_num:04X}")
+        return "1"
 
     def get_backlight_statuses(self, port_num: int) -> Optional[Tuple[str, str]]:
         return "0123"
 
     def get_backlight_pwm_duty(self, port_num: int) -> Optional[Tuple[str, str]]:
+        print(f"exec get_backlight_pwm_duty.{port_num:04X}")
         return "0020"
 
     def backlight_turnon(self) -> None:
