@@ -35,11 +35,18 @@ def backlight1_duty_handler(controller:MlbCtrl):
 def backlight2_duty_handler(controller:MlbCtrl):
     return controller.get_backlight_pwm_duty(2)
 
-def backlight_on_handler(controller:MlbCtrl,value: str):
+def backlight1_on_handler(controller:MlbCtrl,value: str):
     if value == "1":
-        controller.backlight_turnon()
+        controller.backlight1_turnon()
     if value == "0":
-        controller.backlight_turnoff()
+        controller.backlight1_turnoff()
+    return "40"
+
+def backlight2_on_handler(controller:MlbCtrl,value: str):
+    if value == "1":
+        controller.backlight2_turnon()
+    if value == "0":
+        controller.backlight2_turnoff()
     return "40"
 
 # より汎用的に作るなら（引数で選択肢を指定できるクロージャ形式）
@@ -103,7 +110,7 @@ func_map = {
     "backlight2_error_handler": backlight2_error_handler,
     "backlight1_duty_handler": backlight1_duty_handler,
     "backlight2_duty_handler": backlight2_duty_handler,
-    "backlight_on_handler": backlight_on_handler,
+    "backlight1_on_handler": backlight1_on_handler,
     "choice_12": create_choice_validator([1, 2]),
     "choice_bool": create_choice_validator([0, 1]),
     "validate_hex6": validate_16bit_hex_6culum,

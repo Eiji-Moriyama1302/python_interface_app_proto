@@ -37,11 +37,17 @@ class MlbCtrl(InterfaceCtrl):
         print(f"exec get_backlight_pwm_duty.{port_num:04X}")
         return "0020"
 
-    def backlight_turnon(self) -> None:
-        print("MlbCtrl: backlight_turnon")
+    def backlight1_turnon(self) -> None:
+        print("MlbCtrl: backlight1_turnon")
 
-    def backlight_turnoff(self) -> None:
-        print("MlbCtrl: backlight_turnoff")
+    def backlight1_turnoff(self) -> None:
+        print("MlbCtrl: backlight1_turnoff")
+    
+    def backlight2_turnon(self) -> None:
+        print("MlbCtrl: backlight2_turnon")
+
+    def backlight2_turnoff(self) -> None:
+        print("MlbCtrl: backlight2_turnoff")
     
     def set_brightness(self, value: int) -> bool:
         return True
