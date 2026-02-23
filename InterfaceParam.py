@@ -13,7 +13,7 @@ class BaseParameter:
         self.input_func = input_func
         self.output_func = output_func
 
-    def validate(self,value:int):
+    def validate(self,value:int) -> bool:
         """共通のバリデーション（例：ファイル名の存在チェック）"""
         if not self.filename:
             print("エラー: ファイル名が空です。")
@@ -24,7 +24,7 @@ class BaseParameter:
                 return False
         return True
 
-    def prepare_file(self, target_dir:str):
+    def prepare_file(self, target_dir:str) -> None:
         """ファイルが存在しない場合に作成するメソッド"""
         full_path = os.path.join(target_dir, self.filename)
         if not full_path:
@@ -43,12 +43,12 @@ class BaseParameter:
         else:
             print(f"already exist path: {self.full_path}")
     
-    def _update_file(self, Controller:InterfaceCtrl, value:int):
+    def _update_file(self, Controller:InterfaceCtrl, value:int) -> None:
         content = str(value) if value is not None else ""
         with open(self.full_path, 'w', encoding='utf-8') as f:
             f.write(str(content))
 
-    def _read_file_content(self, Contoller:InterfaceCtrl):
+    def _read_file_content(self, Contoller:InterfaceCtrl) -> str:
         """
         共通メソッド: ファイルの存在を確認し、内容を読み出す
         ファイルが存在しない場合は None を返す
@@ -62,7 +62,7 @@ class BaseParameter:
             print(f"ファイル読み込みエラー ({self.full_path}): {e}")
             return None
         
-    def handle_access(self,controlller:InterfaceCtrl): 
+    def handle_access(self,controlller:InterfaceCtrl) -> None: 
         """
         1. input_funcで値を取得
         2. バリデーション
@@ -106,7 +106,7 @@ class Device:
         self.directory_name = directory_name
         self.parameters = parameters if parameters is not None else []
 
-    def access(self,controlller:InterfaceCtrl):
+    def access(self,controlller:InterfaceCtrl) -> None:
         """
         全パラメータに対して、仕様に基づいたアクセスメソッドを実行する
         """
@@ -129,7 +129,7 @@ class InterfaceCard:
             for device in Devices:
                 self.add_device(device)
 
-    def update_status(self):
+    def update_status(self) -> None:
         """
         保持している全てのInterfaceのアクセスメソッドを順次実行する
         """
@@ -147,7 +147,7 @@ class InterfaceCard:
 
         print(f"--- Card status update End ---")
 
-    def add_device(self, device:Device):
+    def add_device(self, device:Device) -> None:
         """deviceを動的に追加するメソッド"""
         print(f"--- Card add_device Start: {device.directory_name} ---")
         self.devices.append(device)

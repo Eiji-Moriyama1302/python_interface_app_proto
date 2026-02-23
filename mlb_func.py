@@ -1,48 +1,49 @@
+from typing import Iterable, Any, Callable
 from mlb_ctrl import MlbCtrl
 
-def fpgaver_handler(controller:MlbCtrl):
+def fpgaver_handler(controller:MlbCtrl) -> str:
     return controller.get_fpgaver()
 
-def rsw_handler(controller:MlbCtrl):
+def rsw_handler(controller:MlbCtrl) -> str:
     return controller.get_rsw()
 
-def displaymode_handler(controller:MlbCtrl,value:str):
+def displaymode_handler(controller:MlbCtrl,value:str) -> None:
     if value == "1":
         controller.display_mode_single()
     if value == "2":
         controller.display_mode_double()
 
-def ethport1_linkgood_handler(controller:MlbCtrl):
+def ethport1_linkgood_handler(controller:MlbCtrl) -> str:
     return controller.get_ether_statuses(1)
 
-def ethport2_linkgood_handler(controller:MlbCtrl):
+def ethport2_linkgood_handler(controller:MlbCtrl) -> str:
     return controller.get_ether_statuses(2)
 
-def ethport3_linkgood_handler(controller:MlbCtrl):
+def ethport3_linkgood_handler(controller:MlbCtrl) -> str:
     return controller.get_ether_statuses(3)
 
-def backlight1_error_handler(controller:MlbCtrl):
+def backlight1_error_handler(controller:MlbCtrl) -> str:
     print(f"exec backlight1_error_handler.")
     return "0"
 
-def backlight2_error_handler(controller:MlbCtrl):
+def backlight2_error_handler(controller:MlbCtrl) -> str:
     print(f"exec backlight2_error_handler.")
     return "1"
 
-def backlight1_duty_handler(controller:MlbCtrl):
+def backlight1_duty_handler(controller:MlbCtrl) -> str:
     return controller.get_backlight_pwm_duty(1)
 
-def backlight2_duty_handler(controller:MlbCtrl):
+def backlight2_duty_handler(controller:MlbCtrl) -> str:
     return controller.get_backlight_pwm_duty(2)
 
-def backlight1_on_handler(controller:MlbCtrl,value: str):
+def backlight1_on_handler(controller:MlbCtrl,value: str) -> str:
     if value == "1":
         controller.backlight1_turnon()
     if value == "0":
         controller.backlight1_turnoff()
     return "40"
 
-def backlight2_on_handler(controller:MlbCtrl,value: str):
+def backlight2_on_handler(controller:MlbCtrl,value: str) -> str:
     if value == "1":
         controller.backlight2_turnon()
     if value == "0":
@@ -50,14 +51,14 @@ def backlight2_on_handler(controller:MlbCtrl,value: str):
     return "40"
 
 # より汎用的に作るなら（引数で選択肢を指定できるクロージャ形式）
-def create_choice_validator(choices):
+def create_choice_validator(choices:Iterable[Any]) -> Callable[[Any], bool]:
     """指定されたリストのいずれかに含まれるかチェックする関数を返す"""
     def validator(value):
         # 数値と文字列の両方を考慮するため、すべて文字列に変換して比較
         return str(value) in [str(c) for c in choices]
     return validator
 
-def validate_16bit_hex_6culum(val:int):
+def validate_16bit_hex_6culum(val:int) -> bool:
     import re
 
     if val is None:
@@ -77,7 +78,7 @@ def validate_16bit_hex_6culum(val:int):
             return False
     return False
 
-def validate_percent(val:int):
+def validate_percent(val:int) -> bool:
     import re
 
     if val is None:

@@ -5,14 +5,14 @@ class InterfaceCtrl(ABC):
         print("Call InterfaceCtrl::__init__\n")
     
     @abstractmethod
-    def open(self):
+    def open(self) -> None:
         pass
     
     @abstractmethod
-    def refresh(self):
+    def refresh(self) -> None:
         pass
 
     @abstractmethod
-    def close(self):
+    def close(self) -> None:
         pass
     
