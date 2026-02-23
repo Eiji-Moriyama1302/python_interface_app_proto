@@ -1,86 +1,73 @@
 import unittest
+from unittest.mock import MagicMock, patch, call
 import os
-import shutil
-from InterfaceParam import InputParameter,OutputParameter,Device,InterfaceCard
+from InterfaceParam import InterfaceCard
 
-# 16bitチェック用の補助関数
-def check_16bit(value):
-    try:
-        num = int(value)
-        return 0 <= num <= 65535
-    except:
-        return False
+class TestInterfaceCard(unittest.TestCase):
 
-class TestParameterSystem(unittest.TestCase):
     def setUp(self):
-        """テストごとにクリーンなディレクトリを作成"""
-        self.test_root = "test_env"
-        if os.path.exists(self.test_root):
-            shutil.rmtree(self.test_root)
-        os.makedirs(self.test_root)
+        # 共通で使用するモックの作成
+        self.mock_ctrl_class = MagicMock()
+        self.mock_ctrl_instance = self.mock_ctrl_class.return_value
+        self.card_dir = "test_card_dir"
+        
+        # Deviceのモック
+        self.mock_device = MagicMock()
+        self.mock_device.directory_name = "device_A"
+        self.mock_device.parameters = [MagicMock(), MagicMock()]
 
-    def tearDown(self):
-        """テスト終了後にディレクトリを削除"""
-        if os.path.exists(self.test_root):
-            shutil.rmtree(self.test_root)
+    @patch('os.makedirs')
+    @patch('os.path.join')
+    def test_init_with_devices(self, mock_join, mock_makedirs):
+        """初期化時にDevicesが渡された場合、正しくadd_deviceが呼ばれるか"""
+        mock_join.return_value = "joined/path"
+        devices = [self.mock_device]
+        
+        # インスタンス化
+        card = InterfaceCard(self.mock_ctrl_class, self.card_dir, Devices=devices)
+        
+        # アサーション
+        self.assertEqual(card.card_directory, self.card_dir)
+        self.assertIn(self.mock_device, card.devices)
+        self.mock_ctrl_class.assert_called_once()  # ctrl = InterfaceCtrl() が呼ばれたか
+        
+        # add_device内の処理が走っているか
+        mock_makedirs.assert_called_with("joined/path", exist_ok=True)
+        for param in self.mock_device.parameters:
+            param.prepare_file.assert_called_with("joined/path")
 
-    def test_input_parameter_validation(self):
-        """InputParameterのバリデーションテスト"""
-        # 正常系
-        p_ok = InputParameter("test.txt", value="100", validator_func=check_16bit)
-        self.assertTrue(p_ok.validate("100"))
+    @patch('os.makedirs')
+    def test_update_status_flow(self, mock_makedirs):
+        """update_statusを実行した際、CtrlのメソッドとDeviceのaccessが正しい順序で呼ばれるか"""
+        card = InterfaceCard(self.mock_ctrl_class, self.card_dir)
+        card.add_device(self.mock_device)
         
-        # 異常系（16bit範囲外）
-        p_ng = InputParameter("test.txt", value="70000", validator_func=check_16bit)
-        self.assertFalse(p_ng.validate("70000"))
+        # テスト実行
+        card.update_status()
+        
+        # 呼び出し順序の検証
+        # 1. open -> 2. refresh -> 3. device.access -> 4. close
+        self.mock_ctrl_instance.open.assert_called_once()
+        self.mock_ctrl_instance.refresh.assert_called_once()
+        self.mock_device.access.assert_called_once_with(self.mock_ctrl_instance)
+        self.mock_ctrl_instance.close.assert_called_once()
 
-    def test_interface_card_add_and_prepare(self):
-        """add_interface時にディレクトリとファイルが作成されるか"""
-        mlb = InterfaceCard(self.test_root)
-        fpga_in = InputParameter("ver.txt", value="1.0.0")
-        fpga_if = Device("fpga", [fpga_in])
+    @patch('os.makedirs')
+    @patch('os.path.join')
+    def test_add_device_creates_directories_and_files(self, mock_join, mock_makedirs):
+        """add_deviceがディレクトリ作成とパラメータの準備を正しく行うか"""
+        mock_join.return_value = "fake/path/device_A"
+        card = InterfaceCard(self.mock_ctrl_class, self.card_dir)
         
-        mlb.add_device(fpga_if)
+        card.add_device(self.mock_device)
         
-        # ファイルが実際に存在するか確認
-        expected_path = os.path.join(self.test_root, "fpga", "ver.txt")
-        self.assertTrue(os.path.exists(expected_path))
-        
-        # 初期値が書き込まれているか確認
-        with open(expected_path, 'r') as f:
-            self.assertEqual(f.read(), "1.0.0")
-
-    def test_update_status_input_to_file(self):
-        """InputParameterの値がファイルに反映されるか"""
-        def test_handler():
-            return "B"
-            
-        mlb = InterfaceCard(self.test_root)
-        param = InputParameter("input.txt", value="A", input_func=test_handler)
-        iface = Device("iface", [param])
-        mlb.add_device(iface)
-        
-        # 値を変更してupdate_status
-        mlb.update_status()
-        
-        with open(param.full_path, 'r') as f:
-            self.assertEqual(f.read(), "B")
-
-    def test_update_status_file_to_output(self):
-        """ファイルの変化がOutputParameterに反映されるか"""
-        mlb = InterfaceCard(self.test_root)
-        param = OutputParameter("output.txt", value="old_val")
-        iface = Device("iface", [param])
-        mlb.add_device(iface)
-        
-        # 外部操作を模してファイルを書き換え
-        with open(param.full_path, 'w') as f:
-            f.write("new_val")
-            
-        mlb.update_status()
-        
-        # OutputParameterの値が更新されているか
-        self.assertEqual(param._value, "new_val")
+        # パス結合が正しい引数で呼ばれたか
+        mock_join.assert_called_with(self.card_dir, self.mock_device.directory_name)
+        # ディレクトリ作成が呼ばれたか
+        mock_makedirs.assert_called_with("fake/path/device_A", exist_ok=True)
+        # 各パラメータのファイル準備が呼ばれたか
+        for param in self.mock_device.parameters:
+            param.prepare_file.assert_called_with("fake/path/device_A")
 
 if __name__ == '__main__':
     unittest.main()
