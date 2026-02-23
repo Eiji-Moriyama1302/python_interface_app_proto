@@ -1,6 +1,7 @@
 import os
 import re
 
+from typing import Callable, Any, Optional
 from InterfaceCtrl import InterfaceCtrl
 
 class BaseParameter:
@@ -85,14 +86,26 @@ class BaseParameter:
 
 class InputParameter(BaseParameter):
     """入力用パラメータクラス"""
-    def __init__(self, filename, value=None, validator_func=None, input_func=None):
+    def __init__(
+            self, 
+            filename:str, 
+            value:int=None, 
+            validator_func: Optional[Callable[[Any], bool]]=None, 
+            input_func: Optional[Callable] = None
+    ):
         output_func = self._update_file
         super().__init__(filename, value, validator_func, input_func, output_func)
         
 
 class OutputParameter(BaseParameter):
     """出力用パラメータクラス（ファイル -> メモリ）"""
-    def __init__(self, filename, value=None, validator_func=None, output_func=None):
+    def __init__(
+            self, 
+            filename:str, 
+            value:int=None, 
+            validator_func: Optional[Callable[[Any], bool]] = None, 
+            output_func: Optional[Callable[[Optional[InterfaceCtrl], Any], Any]] = None
+    ):
         input_func = self._read_file_content
         super().__init__(filename, value, validator_func, input_func, output_func)
         
