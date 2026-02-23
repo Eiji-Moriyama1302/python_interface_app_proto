@@ -43,7 +43,7 @@ def backlight2_duty_handler(controller:MlbCtrl):
     print(f"exec backlight2_duty_handler.")
     return controller.get_backlight_pwm_duty(2)
 
-def backlight_on_handler(controller:MlbCtrl,value):
+def backlight_on_handler(controller:MlbCtrl,value: str):
     print(f"exec backlight_on_handler.")
     if value == "1":
         controller.backlight_turnon()
@@ -59,7 +59,7 @@ def create_choice_validator(choices):
         return str(value) in [str(c) for c in choices]
     return validator
 
-def validate_16bit_hex_6culum(val):
+def validate_16bit_hex_6culum(val:int):
     import re
 
     if val is None:
@@ -79,7 +79,7 @@ def validate_16bit_hex_6culum(val):
             return False
     return False
 
-def validate_percent(val):
+def validate_percent(val:int):
     import re
 
     if val is None:

@@ -28,7 +28,7 @@ class MlbCtrl(InterfaceCtrl):
     def get_ether_statuses(self, port_num: int) -> Optional[Tuple[str, str]]:
         return f"{port_num:04X}"
 
-    def get_backlight_statuses(self) -> Optional[Tuple[str, str]]:
+    def get_backlight_statuses(self, port_num: int) -> Optional[Tuple[str, str]]:
         return "0123"
 
     def get_backlight_pwm_duty(self, port_num: int) -> Optional[Tuple[str, str]]:

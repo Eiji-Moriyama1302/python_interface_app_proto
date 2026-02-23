@@ -5,7 +5,7 @@ from InterfaceCtrl import InterfaceCtrl
 
 class BaseParameter:
     """共通のプロパティを持つベースクラス"""
-    def __init__(self, filename, value=None, validator_func=None, input_func=None, output_func=None):
+    def __init__(self, filename:str, value:int=None, validator_func=None, input_func=None, output_func=None):
         self.filename = filename
         self._value = value
         self.full_path = None
@@ -13,7 +13,7 @@ class BaseParameter:
         self.input_func = input_func
         self.output_func = output_func
 
-    def validate(self,value):
+    def validate(self,value:int):
         """共通のバリデーション（例：ファイル名の存在チェック）"""
         if not self.filename:
             print("エラー: ファイル名が空です。")
@@ -24,7 +24,7 @@ class BaseParameter:
                 return False
         return True
 
-    def prepare_file(self, target_dir):
+    def prepare_file(self, target_dir:str):
         """ファイルが存在しない場合に作成するメソッド"""
         full_path = os.path.join(target_dir, self.filename)
         if not full_path:
@@ -43,12 +43,12 @@ class BaseParameter:
         else:
             print(f"already exist path: {self.full_path}")
     
-    def _update_file(self, Controller, value):
+    def _update_file(self, Controller:InterfaceCtrl, value:int):
         content = str(value) if value is not None else ""
         with open(self.full_path, 'w', encoding='utf-8') as f:
             f.write(str(content))
 
-    def _read_file_content(self, Contoller):
+    def _read_file_content(self, Contoller:InterfaceCtrl):
         """
         共通メソッド: ファイルの存在を確認し、内容を読み出す
         ファイルが存在しない場合は None を返す
@@ -62,7 +62,7 @@ class BaseParameter:
             print(f"ファイル読み込みエラー ({self.full_path}): {e}")
             return None
         
-    def handle_access(self,controlller): 
+    def handle_access(self,controlller:InterfaceCtrl): 
         """
         1. input_funcで値を取得
         2. バリデーション
@@ -99,7 +99,7 @@ class OutputParameter(BaseParameter):
         
 
 class Device:
-    def __init__(self, directory_name, parameters=None):
+    def __init__(self, directory_name:str, parameters:BaseParameter=None):
         """
         :param directory_name: ベースとなるディレクトリ名
         :param parameters: InputParameter または OutputParameter のリスト
@@ -107,7 +107,7 @@ class Device:
         self.directory_name = directory_name
         self.parameters = parameters if parameters is not None else []
 
-    def access(self,controlller):
+    def access(self,controlller:InterfaceCtrl):
         """
         全パラメータに対して、仕様に基づいたアクセスメソッドを実行する
         """
@@ -118,7 +118,7 @@ class InterfaceCard:
     """
     複数のInterfaceを束ねて管理するカードクラス
     """
-    def __init__(self, InterfaceCtrl, card_directory, Devices=None):
+    def __init__(self, InterfaceCtrl:InterfaceCtrl, card_directory:str, Devices:Device=None):
         """
         :param card_directory: カードのルートディレクトリ名
         :param devices: device
@@ -148,7 +148,7 @@ class InterfaceCard:
 
         print(f"--- Card status update End ---")
 
-    def add_device(self, device):
+    def add_device(self, device:Device):
         """deviceを動的に追加するメソッド"""
         print(f"--- Card add_device Start: {device.directory_name} ---")
         self.devices.append(device)
