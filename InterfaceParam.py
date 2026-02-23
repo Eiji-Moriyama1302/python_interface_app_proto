@@ -79,7 +79,6 @@ class BaseParameter:
             self._value = processed_value
             # 値が更新された後の通知や後続処理（UI更新など）があればoutput_funcで実行
             if self.output_func:
-                print(f"[Output] Exec self.output_func: {self._value}")
                 self.output_func(controlller,self._value)
             print(f"[Output] パラメータを更新しました: {self._value}")
         
