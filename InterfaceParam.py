@@ -38,12 +38,12 @@ class BaseParameter:
             os.makedirs(os.path.dirname(self.full_path), exist_ok=True)
             
             # 初期値があれば書き込み、なければ空ファイル作成
-            self._update_file(self._value)
+            self._update_file(None, self._value)
             print(f"[Input] ファイルを新規作成しました: {self.full_path}")
         else:
             print(f"already exist path: {self.full_path}")
     
-    def _update_file(self, controlller, value):
+    def _update_file(self, Controller, value):
         content = str(value) if value is not None else ""
         with open(self.full_path, 'w', encoding='utf-8') as f:
             f.write(str(content))
