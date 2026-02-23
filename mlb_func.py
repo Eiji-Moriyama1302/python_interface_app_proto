@@ -93,4 +93,22 @@ def validate_percent(val):
             return False
     return False
 
-
+# --- 関数マッピング ---
+# JSON内の文字列を実際の関数オブジェクトに変換するための辞書
+func_map = {
+    "fpgaver_handler": fpgaver_handler,
+    "rsw_handler": rsw_handler,
+    "displaymode_handler": displaymode_handler,
+    "ethport1_linkgood_handler": ethport1_linkgood_handler,
+    "ethport2_linkgood_handler": ethport2_linkgood_handler,
+    "ethport3_linkgood_handler": ethport3_linkgood_handler,
+    "backlight1_error_handler": backlight1_error_handler,
+    "backlight2_error_handler": backlight2_error_handler,
+    "backlight1_duty_handler": backlight1_duty_handler,
+    "backlight2_duty_handler": backlight2_duty_handler,
+    "backlight_on_handler": backlight_on_handler,
+    "choice_12": create_choice_validator([1, 2]),
+    "choice_bool": create_choice_validator([0, 1]),
+    "validate_hex6": validate_16bit_hex_6culum,
+    "validate_percent": validate_percent
+}
