@@ -63,25 +63,42 @@ class BaseParameter:
             print(f"ファイル読み込みエラー ({self.full_path}): {e}")
             return None
         
-    def handle_access(self,controlller:InterfaceCtrl) -> None: 
+    # リファクタリング用補助メソッド（コードの重複を避ける場合）
+    def _get_processed_input(self, controller: InterfaceCtrl):
+        new_val = self.input_func(controller) if self.input_func else None
+        return str(new_val).splitlines()[0] if new_val else new_val
+
+    def _apply_update(self, controller: InterfaceCtrl, value: int):
+        self._value = value
+        if self.output_func:
+            self.output_func(controller, self._value)
+        print(f"[Output] パラメータを更新しました（強制）: {self._value}")
+
+    def handle_access(self, controller: InterfaceCtrl) -> None: 
         """
-        1. input_funcで値を取得
-        2. バリデーション
-        3. 変化があれば内部状態を更新し、通知（output_func）を実行
+        通常アクセス：値に変化があった場合のみ更新・通知を行う
         """
-        # input_funcを実行して値を取得
-        new_val = self.input_func(controlller) if self.input_func else None
-        processed_value = str(new_val).splitlines()[0] if new_val else new_val
+        processed_value = self._get_processed_input(controller)
         
         if processed_value is None:
             return
 
+        # 既存ロジック：バリデーション OK かつ 値に変化がある場合
         if self.validate(processed_value) and processed_value != self._value:
-            self._value = processed_value
-            # 値が更新された後の通知や後続処理（UI更新など）があればoutput_funcで実行
-            if self.output_func:
-                self.output_func(controlller,self._value)
-            print(f"[Output] パラメータを更新しました: {self._value}")
+            self._apply_update(controller, processed_value)
+
+    def handle_access_always(self, controller: InterfaceCtrl) -> None:
+        """
+        強制アクセス：値の変化に関わらず、バリデーションが通れば更新・通知を実行する
+        """
+        processed_value = self._get_processed_input(controller)
+        
+        if processed_value is None:
+            return
+
+        # 変更点：値の比較 (processed_value != self._value) を行わない
+        if self.validate(processed_value):
+            self._apply_update(controller, processed_value)
         
 
 class InputParameter(BaseParameter):
@@ -174,5 +191,6 @@ class InterfaceCard:
         for param in device.parameters:
             # ファイルの物理作成
             param.prepare_file(target_dir)
+            param.handle_access_always(self.ctrl)
 
         print(f"--- Card add_device End: {device.directory_name} ---")

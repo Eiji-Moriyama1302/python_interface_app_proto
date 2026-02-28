@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch, call
 import os
-from InterfaceParam import InterfaceCard
+from InterfaceParam import InterfaceCard, BaseParameter
 
 class TestInterfaceCard(unittest.TestCase):
 
@@ -68,6 +68,84 @@ class TestInterfaceCard(unittest.TestCase):
         # 各パラメータのファイル準備が呼ばれたか
         for param in self.mock_device.parameters:
             param.prepare_file.assert_called_with("fake/path/device_A")
+
+
+class TestBaseParameter(unittest.TestCase):
+    """BaseParameterクラスの新メソッドに対するテスト"""
+
+    def setUp(self):
+        self.mock_ctrl = MagicMock()
+        # テスト用の validator: 正の整数の場合のみ True
+        self.validator = lambda x: int(x) > 0
+        self.mock_input = MagicMock()
+        self.mock_output = MagicMock()
+        
+        self.param = BaseParameter(
+            filename="test_param.txt",
+            value=100,
+            validator_func=self.validator,
+            input_func=self.mock_input,
+            output_func=self.mock_output
+        )
+
+    def test_get_processed_input(self):
+        """入力値が正しく1行目のみ抽出・文字列化されるか"""
+        # 正常系: 改行を含む文字列
+        self.mock_input.return_value = "200\nsecond_line"
+        result = self.param._get_processed_input(self.mock_ctrl)
+        self.assertEqual(result, "200")
+
+        # 正常系: 単一の値
+        self.mock_input.return_value = 500
+        result = self.param._get_processed_input(self.mock_ctrl)
+        self.assertEqual(result, "500")
+
+        # 異常系: None
+        self.mock_input.return_value = None
+        result = self.param._get_processed_input(self.mock_ctrl)
+        self.assertIsNone(result)
+
+    def test_apply_update(self):
+        """内部状態の更新とoutput_funcの呼び出しが正しく行われるか"""
+        new_val = "300"
+        self.param._apply_update(self.mock_ctrl, new_val)
+
+        # _value が更新されていること
+        self.assertEqual(self.param._value, "300")
+        # output_func が正しい引数で呼ばれていること
+        self.mock_output.assert_called_once_with(self.mock_ctrl, "300")
+
+    def test_handle_access_always_with_same_value(self):
+        """値が前回と同じ(100)でも、更新・通知処理が走ることを確認"""
+        self.param._value = "100"
+        self.mock_input.return_value = "100"
+        
+        # 実行
+        self.param.handle_access_always(self.mock_ctrl)
+
+        # バリデーションが通れば、値が同じでも output_func が呼ばれるはず
+        self.mock_output.assert_called_once_with(self.mock_ctrl, "100")
+
+    def test_handle_access_always_invalid_value(self):
+        """バリデーションに失敗した場合は、更新・通知が走らないことを確認"""
+        self.param._value = "100"
+        self.mock_input.return_value = "-50"  # 0以下なのでバリデーション失敗
+        
+        # 実行
+        self.param.handle_access_always(self.mock_ctrl)
+
+        # output_func は呼ばれない
+        self.mock_output.assert_not_called()
+        # _value も更新されない
+        self.assertEqual(self.param._value, "100")
+
+    def test_handle_access_always_none_input(self):
+        """入力がNoneの場合は処理を中断することを確認"""
+        self.mock_input.return_value = None
+        
+        self.param.handle_access_always(self.mock_ctrl)
+
+        self.mock_output.assert_not_called()
 
 if __name__ == '__main__':
     unittest.main()
