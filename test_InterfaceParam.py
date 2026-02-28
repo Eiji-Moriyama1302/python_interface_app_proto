@@ -37,20 +37,45 @@ class TestInterfaceCard(unittest.TestCase):
             param.prepare_file.assert_called_with("joined/path")
 
     @patch('os.makedirs')
-    def test_update_status_flow(self, mock_makedirs):
-        """update_statusを実行した際、CtrlのメソッドとDeviceのaccessが正しい順序で呼ばれるか"""
+    @patch('os.path.join')
+    def test_add_device_flow(self, mock_join, mock_makedirs):
+        """add_deviceを実行した際、open/closeが正しく呼ばれるか"""
         card = InterfaceCard(self.mock_ctrl_class, self.card_dir)
+        
+        # 1. ここで初期化時の呼び出しをリセットする
+        self.mock_ctrl_instance.open.reset_mock()
+        self.mock_ctrl_instance.close.reset_mock()
+        
+        # 2. テスト実行
         card.add_device(self.mock_device)
         
-        # テスト実行
+        # 3. add_device内で呼ばれた1回を検証
+        self.mock_ctrl_instance.open.assert_called_once()
+        self.mock_ctrl_instance.close.assert_called_once()
+        
+    @patch('os.makedirs')
+    def test_update_status_flow(self, mock_makedirs):
+        """update_statusを実行した際、呼び出し回数が累計2回になることを確認"""
+        card = InterfaceCard(self.mock_ctrl_class, self.card_dir)
+
+        # 初期化時の分をリセット
+        self.mock_ctrl_instance.open.reset_mock()
+        self.mock_ctrl_instance.close.reset_mock()
+        self.mock_ctrl_instance.refresh.reset_mock()
+        
+        # 1回目: add_deviceで open/close が呼ばれる
+        card.add_device(self.mock_device)
+        
+        # 2回目: update_statusを実行
         card.update_status()
         
-        # 呼び出し順序の検証
-        # 1. open -> 2. refresh -> 3. device.access -> 4. close
-        self.mock_ctrl_instance.open.assert_called_once()
+        # 呼び出し回数の検証 (累計 2回)
+        self.assertEqual(self.mock_ctrl_instance.open.call_count, 2)
+        self.assertEqual(self.mock_ctrl_instance.close.call_count, 2)
+        
+        # update_status固有の処理は1回だけ呼ばれているはず
         self.mock_ctrl_instance.refresh.assert_called_once()
         self.mock_device.access.assert_called_once_with(self.mock_ctrl_instance)
-        self.mock_ctrl_instance.close.assert_called_once()
 
     @patch('os.makedirs')
     @patch('os.path.join')

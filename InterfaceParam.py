@@ -154,6 +154,9 @@ class InterfaceCard:
         """
         self.card_directory = card_directory
         self.ctrl = InterfaceCtrl()
+        self.ctrl.open()
+        self.ctrl.refresh()
+        self.ctrl.close()
         self.devices = []
         if Devices:
             for device in Devices:
@@ -187,10 +190,14 @@ class InterfaceCard:
         print(f"makedirs: {target_dir}")
         os.makedirs(target_dir, exist_ok=True)
         
+        self.ctrl.open()
+        
         # 2. 配下の全パラメータに対してパス設定とファイル作成を行う
         for param in device.parameters:
             # ファイルの物理作成
             param.prepare_file(target_dir)
             param.handle_access_always(self.ctrl)
+        
+        self.ctrl.close()
 
         print(f"--- Card add_device End: {device.directory_name} ---")
